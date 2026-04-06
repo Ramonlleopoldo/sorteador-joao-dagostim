@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteador Sem Repetição</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        #numero {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #007bff;
+            margin: 20px 0;
+            min-height: 80px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #status {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Sorteador João Dagostim</h1>
+        <span>Boa sorte!</span>
+        <div id="numero">-</div>
+        <button id="btnGerar" onclick="gerarProximo()">Gerar Número</button>
+        <div id="status">Restam <span id="contador">2000</span> números</div>
+        <button onclick="resetar()" style="margin-top: 10px; background-color: #dc3545; font-size: 0.8rem;">Resetar</button>
+    </div>
+
+    <script>
+        let numeros = [];
+        const min = 1;
+        const max = 2000;
+
+        function inicializar() {
+            numeros = [];
+            for (let i = min; i <= max; i++) {
+                numeros.push(i);
+            }
+            // Embaralha a lista (Algoritmo Fisher-Yates)
+            for (let i = numeros.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [numeros[i], numeros[j]] = [numeros[j], numeros[i]];
+            }
+            atualizarInterface("-");
+        }
+
+        function gerarProximo() {
+            if (numeros.length > 0) {
+                const num = numeros.pop();
+                atualizarInterface(num);
+            } else {
+                alert("Todos os números foram sorteados!");
+                document.getElementById("btnGerar").disabled = true;
+            }
+        }
+
+        function atualizarInterface(valor) {
+            document.getElementById("numero").innerText = valor;
+            document.getElementById("contador").innerText = numeros.length;
+        }
+
+        function resetar() {
+            if (confirm("Deseja resetar e começar do zero?")) {
+                document.getElementById("btnGerar").disabled = false;
+                inicializar();
+            }
+        }
+
+        // Inicializa ao carregar a página
+        window.onload = inicializar;
+    </script>
+
+</body>
+
+</html>
