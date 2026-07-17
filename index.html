@@ -11,9 +11,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            /* Alterado para min-height para acomodar a lista */
             margin: 0;
             background-color: #f0f2f5;
+            padding: 20px;
         }
 
         .container {
@@ -28,6 +30,7 @@
         h1 {
             color: #333;
             font-size: 1.5rem;
+            margin-bottom: 5px;
         }
 
         #numero {
@@ -64,6 +67,52 @@
             font-size: 0.8rem;
             color: #666;
         }
+
+        /* --- NOVOS ESTILOS PARA O HISTÓRICO --- */
+        .historico-container {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            text-align: left;
+        }
+
+        .historico-titulo {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        #lista-sorteados {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            min-height: 30px;
+        }
+
+        .badge-numero {
+            background-color: #e9ecef;
+            color: #495057;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 
@@ -73,22 +122,35 @@
         <h1>Sorteador João Dagostim</h1>
         <span>Boa sorte!</span>
         <div id="numero">-</div>
+
         <button id="btnGerar" onclick="gerarProximo()">Gerar Número</button>
-        <div id="status">Restam <span id="contador">2000</span> números</div>
+
+        <div id="status">Restam <span id="contador">5</span> números</div>
+
         <button onclick="resetar()" style="margin-top: 10px; background-color: #dc3545; font-size: 0.8rem;">Resetar</button>
+
+        <div class="historico-container">
+            <span class="historico-titulo">Números já sorteados:</span>
+            <div id="lista-sorteados">
+            </div>
+        </div>
     </div>
 
     <script>
         let numeros = [];
+        let sorteados = []; // Array para guardar o que já saiu
         const min = 1;
-        const max = 2000;
+        const max = 300;
 
         function inicializar() {
             numeros = [];
+            sorteados = []; // Limpa o histórico no código
+            document.getElementById("lista-sorteados").innerHTML = ""; // Limpa visualmente
+
             for (let i = min; i <= max; i++) {
                 numeros.push(i);
             }
-            // Embaralha a lista (Algoritmo Fisher-Yates)
+
             for (let i = numeros.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [numeros[i], numeros[j]] = [numeros[j], numeros[i]];
@@ -99,11 +161,23 @@
         function gerarProximo() {
             if (numeros.length > 0) {
                 const num = numeros.pop();
+                sorteados.push(num); // Adiciona ao histórico
+
+                adicionarAoHistoricoVisual(num);
                 atualizarInterface(num);
             } else {
                 alert("Todos os números foram sorteados!");
                 document.getElementById("btnGerar").disabled = true;
             }
+        }
+
+        // Função para criar as "bolinhas" de números sorteados
+        function adicionarAoHistoricoVisual(num) {
+            const lista = document.getElementById("lista-sorteados");
+            const span = document.createElement("span");
+            span.className = "badge-numero";
+            span.innerText = num;
+            lista.appendChild(span);
         }
 
         function atualizarInterface(valor) {
@@ -118,7 +192,6 @@
             }
         }
 
-        // Inicializa ao carregar a página
         window.onload = inicializar;
     </script>
 
